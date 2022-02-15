@@ -6,11 +6,9 @@ const db = require('../db/connection.js')
 
 beforeEach(() => seed(data))
 
-afterAll(() => {
-  if (db.end) db.end();
-});
+afterAll(() => db.end());
 
-  describe("GET /api/topics", () => {
+describe("GET /api/topics", () => {
     test("Status 200", () => {
       return request(app)
         .get("/api/topics")
@@ -21,7 +19,6 @@ afterAll(() => {
             .get("/api/topics")
             .expect(200)
         .then((response) => {
-            console.log(response.body)
             expect(response.body).toHaveLength(3);
             response.body.forEach((cell) => {
                 expect(cell).toEqual(
@@ -32,4 +29,30 @@ afterAll(() => {
               });
         })
     })
-})
+});
+
+describe("GET /api/articles/:article_id", () => {
+    test("Status 200", () => {
+      return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+    });
+    test("returns a specified object from the database", () => {
+        return request(app)
+            .get("/api/articles/2")
+            .expect(200)
+        .then((response) => {
+            expect(Object.keys(response.body)).toHaveLength(7);
+            expect(response.body).toEqual({
+                article_id: 3,
+                title: "Eight pug gifs that remind me of mitch",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "some gifs",
+                created_at: '2020-11-03T09:12:00.000Z',
+                votes: 0,
+              },
+            );
+        })
+    })
+});
