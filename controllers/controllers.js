@@ -1,7 +1,8 @@
 const {
     fetchTopics,
     fetchArticles,
-    fetchArticle
+    fetchArticle,
+    alterArticle
  } = require('../models/models.js')
 
 
@@ -20,7 +21,7 @@ function getArticles(req,res,next) {
         })
     } else {
         let index = ((req.path).slice(14))
-        fetchArticle(index)
+        fetchArticle(index-1)
         .then((data) => {
             res.status(200).send(data)
         })
@@ -30,7 +31,16 @@ function getArticles(req,res,next) {
     }
 }
 
+function patchArticle(req,res,next) {
+    let index = (((req.path).slice(14)))
+    alterArticle(index,req.body.incVotes)
+    .then((data) => {
+        res.status(200).send(data)
+    })
+}
+
 module.exports = {
     getTopics,
-    getArticles
+    getArticles,
+    patchArticle
 }
