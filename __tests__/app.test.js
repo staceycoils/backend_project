@@ -31,8 +31,8 @@ describe("GET /api/topics", () => {
             .expect(200)
         .then((response) => {
             expect(response.body).toHaveLength(3);
-            response.body.forEach((cell) => {
-                expect(cell).toEqual(
+            response.body.forEach((topic) => {
+                expect(topic).toEqual(
                   {
                     description: expect.any(String),
                     slug: expect.any(String)
@@ -45,12 +45,12 @@ describe("GET /api/topics", () => {
 describe("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
-        .get("/api/articles/2")
+        .get("/api/articles/3")
         .expect(200)
     });
     test("returns a specified object from the database", () => {
         return request(app)
-            .get("/api/articles/2")
+            .get("/api/articles/3")
             .expect(200)
         .then((response) => {
             expect(Object.keys(response.body)).toHaveLength(7);
