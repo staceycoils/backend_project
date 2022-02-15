@@ -1,10 +1,12 @@
 const express = require("express");
 
 const { 
-    getTopics, 
     getArticles,
     getArticle
-} = require('./controllers/controllers.js');
+} = require('./controllers/controllers_articles.js');
+const { 
+    getTopics
+} = require('./controllers/controllers_topics.js');
 
 const app = express();
 app.use(express.json());

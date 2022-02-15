@@ -1,16 +1,7 @@
 const {
-    fetchTopics,
     fetchArticles,
     fetchArticle
- } = require('../models/models.js')
-
-
-function getTopics(req,res) {
-    fetchTopics()
-        .then((data) => {
-            res.status(200).send(data)
-        })
-}
+} = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
     fetchArticles()
@@ -31,7 +22,6 @@ function getArticle(req,res,next) {
 }
 
 module.exports = {
-    getTopics,
     getArticles,
     getArticle
 }
