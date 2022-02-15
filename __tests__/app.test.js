@@ -52,8 +52,7 @@ describe("GET /api/articles/:article_id", () => {
         return request(app)
             .get("/api/articles/3")
             .expect(200)
-        .then((response) => {
-            expect(Object.keys(response.body)).toHaveLength(7);
+        .then(() => {
             expect.objectContaining({
                 article_id: 3,
                 title: "Eight pug gifs that remind me of mitch",
