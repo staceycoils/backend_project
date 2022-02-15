@@ -17,7 +17,8 @@ function fetchArticles() {
 function fetchArticle(num) {
     return db.query("SELECT * FROM articles")
         .then((data) => {
-            return data.rows[num]
+            if (!data.rows[num]) return Promise.reject();
+            return data.rows[num];
         })
 }
 

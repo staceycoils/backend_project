@@ -12,7 +12,7 @@ function getTopics(req,res) {
         })
 }
 
-function getArticles(req,res) {
+function getArticles(req,res,next) {
     if (req.path.endsWith("articles")) {
         fetchArticles()
         .then((data) => {
@@ -24,15 +24,13 @@ function getArticles(req,res) {
         .then((data) => {
             res.status(200).send(data)
         })
+        .catch(() => {
+            res.status(404).send("Non-valid id")
+        })
     }
-}
-
-function getArticle(req,res) {
-    // console.log(req.route)
 }
 
 module.exports = {
     getTopics,
-    getArticles,
-    getArticle
+    getArticles
 }
