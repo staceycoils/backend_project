@@ -20,7 +20,7 @@ function getArticles(req,res,next) {
 }
 
 function getArticle(req,res,next) {
-    let index = ((req.path).slice(14))
+    let index = (req.params.article_id)
     fetchArticle(index)
     .then((data) => {
         res.status(200).send(data)
