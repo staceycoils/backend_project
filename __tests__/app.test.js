@@ -8,6 +8,17 @@ beforeEach(() => seed(data))
 
 afterAll(() => db.end());
 
+describe("GET /*", () => {
+  test("Status 404 when given invalid path", () => {
+      return request(app)
+        .get("/badpath")
+        .expect(404)
+        .then((response) => {
+          expect(response.error.text).toBe("Path not found!")
+        })
+  })
+})
+
 describe("GET /api/topics", () => {
     test("Status 200", () => {
       return request(app)
@@ -55,4 +66,12 @@ describe("GET /api/articles/:article_id", () => {
             );
         })
     })
+    test("Status 404 when valid but non-existant :article_id", () => {
+      return request(app)
+        .get("/api/articles/4321567")
+        .expect(404)
+        .then((response) => {
+          expect(response.error.text).toBe("Non-valid id")
+        })
+    });
 });
