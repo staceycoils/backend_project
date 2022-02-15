@@ -7,4 +7,22 @@ function fetchTopics() {
         })
 }
 
-module.exports = fetchTopics;
+function fetchArticles() {
+    return db.query("SELECT * FROM articles")
+        .then((data) => {
+            return data.rows
+        })
+}
+
+function fetchArticle(num) {
+    return db.query("SELECT * FROM articles")
+        .then((data) => {
+            return data.rows[num]
+        })
+}
+
+module.exports = {
+    fetchTopics,
+    fetchArticles,
+    fetchArticle
+};
