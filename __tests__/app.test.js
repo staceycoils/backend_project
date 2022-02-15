@@ -8,10 +8,10 @@ beforeEach(() => seed(data))
 
 afterAll(() => db.end());
 
-describe("GET /*", () => {
+describe("GET /not-a-path", () => {
   test("Status 404 when given invalid path", () => {
       return request(app)
-        .get("/badpath")
+        .get("/not-a-path")
         .expect(404)
         .then((response) => {
           expect(response.error.text).toBe("Path not found!")
@@ -54,7 +54,7 @@ describe("GET /api/articles/:article_id", () => {
             .expect(200)
         .then((response) => {
             expect(Object.keys(response.body)).toHaveLength(7);
-            expect(response.body).toEqual({
+            expect.objectContaining({
                 article_id: 3,
                 title: "Eight pug gifs that remind me of mitch",
                 topic: "mitch",
