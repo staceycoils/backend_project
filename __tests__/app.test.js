@@ -50,7 +50,7 @@ describe("GET /api/articles/:article_id", () => {
     });
     test("returns a specified object from the database", () => {
         return request(app)
-            .get("/api/articles/2")
+            .get("/api/articles/3")
             .expect(200)
         .then((response) => {
             expect(Object.keys(response.body)).toHaveLength(7);
@@ -75,3 +75,49 @@ describe("GET /api/articles/:article_id", () => {
         })
     });
 });
+
+let newVotes = { incVotes: 1 };
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Status 200", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send(newVotes)
+      .expect(200)
+    })
+  test("Returns the updated article", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send(newVotes)
+      .expect(200)
+      .then((response) => {
+        expect(Object.keys(response.body)).toHaveLength(7);
+        expect(response.body).toEqual({
+            article_id: 3,
+            title: "Eight pug gifs that remind me of mitch",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "some gifs",
+            created_at: '2020-11-03T09:12:00.000Z',
+            votes: 1,
+          },
+        );
+      });
+  })
+  test("Runs multiple times", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send(newVotes)
+      .expect(200)
+      .then(() => {
+        newVotes.incVotes = 100;
+        return request(app)
+          .patch("/api/articles/3")
+          .send(newVotes)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.votes).toBe(101)
+          })
+      })
+  })
+})
