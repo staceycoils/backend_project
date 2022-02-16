@@ -16,9 +16,7 @@ function getArticle(req,res,next) {
     .then((data) => {
         res.status(200).send(data)
     })
-    .catch(() => {
-        res.status(404).send("Non-valid id")
-    })
+    .catch(next)
 }
 
 module.exports = {

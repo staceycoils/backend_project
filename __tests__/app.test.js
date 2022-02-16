@@ -42,7 +42,7 @@ describe("GET /api/topics", () => {
     })
 });
 
-describe("GET /api/articles/:article_id", () => {
+describe.only("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
         .get("/api/articles/3")
@@ -70,7 +70,24 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/4321567")
         .expect(404)
         .then((response) => {
-          expect(response.error.text).toBe("Non-valid id")
+          expect(response.body.msg).toBe("Invalid ID, no data found")
+        })
+    });
+    test("Status 400 when invalid :article_id", () => {
+      return request(app)
+        .get("/api/articles/notanID")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad Request")
+        })
+    });
+    //following test cannot be tested until a delete function is added due to no test data being empty
+    xtest("Status 204 when valid but empty :article_id", () => {
+      return request(app)
+        .get("/api/articles/727272")
+        .expect(204)
+        .then((response) => {
+          console.log(response.body.msg, "No data for ID")
         })
     });
 });
