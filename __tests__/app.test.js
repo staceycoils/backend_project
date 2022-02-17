@@ -110,13 +110,13 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newVotes)
       .expect(200)
       .then(() => {
-        newVotes.incVotes = 100;
+        newVotes.incVotes = -100;
         return request(app)
           .patch("/api/articles/3")
           .send(newVotes)
           .expect(200)
           .then((response) => {
-            expect(response.body.votes).toBe(101)
+            expect(response.body.votes).toBe(-99)
           })
       })
   })
