@@ -81,7 +81,7 @@ describe("GET /api/articles/:article_id", () => {
           expect(response.body.msg).toBe("Bad Request")
         })
     });
-    test("Status 204 when valid but empty :article_id", () => {
+    xtest("Status 204 when valid but empty :article_id", () => {
       return request(app)
         .get("/api/articles/727272")
         .expect(204)
@@ -93,7 +93,7 @@ describe("GET /api/articles/:article_id", () => {
 
 let newVotes = { incVotes: 1 };
 
-describe.only("PATCH /api/articles/:article_id", () => {
+describe("PATCH /api/articles/:article_id", () => {
   test("Status 200", () => {
     return request(app)
       .patch("/api/articles/3")
