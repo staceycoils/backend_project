@@ -81,8 +81,7 @@ describe("GET /api/articles/:article_id", () => {
           expect(response.body.msg).toBe("Bad Request")
         })
     });
-    //following test cannot be tested until a delete function is added due to no test data being empty
-    xtest("Status 204 when valid but empty :article_id", () => {
+    test("Status 204 when valid but empty :article_id", () => {
       return request(app)
         .get("/api/articles/727272")
         .expect(204)
@@ -94,7 +93,7 @@ describe("GET /api/articles/:article_id", () => {
 
 let newVotes = { incVotes: 1 };
 
-describe("PATCH /api/articles/:article_id", () => {
+describe.only("PATCH /api/articles/:article_id", () => {
   test("Status 200", () => {
     return request(app)
       .patch("/api/articles/3")
@@ -139,9 +138,38 @@ describe("PATCH /api/articles/:article_id", () => {
   test("Status 404 when valid but non-existant :article_id", () => {
     return request(app)
       .patch("/api/articles/4321567")
+      .send(newVotes)
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Invalid ID, no data found")
       })
+  });
+  test("Status 400 when invalid :article_id", () => {
+    return request(app)
+      .patch("/api/articles/potato")
+      .send(newVotes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request")
+      })
+  });
+  test("Status 400 when invalid data sent", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ incVotes: "bad data" })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request")
+      })
+      
+  });
+  test("Status 400 when no data sent", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request")
+      })
+      
   });
 })
