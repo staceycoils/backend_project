@@ -42,7 +42,7 @@ describe("GET /api/topics", () => {
     })
 });
 
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
         .get("/api/articles/3")
@@ -136,4 +136,12 @@ describe("PATCH /api/articles/:article_id", () => {
           })
       })
   })
+  test("Status 404 when valid but non-existant :article_id", () => {
+    return request(app)
+      .patch("/api/articles/4321567")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid ID, no data found")
+      })
+  });
 })
