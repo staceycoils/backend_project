@@ -1,32 +1,22 @@
 const express = require("express");
 
 const { 
-<<<<<<< HEAD
-    getTopics, 
     getArticles,
+    getArticle,
     patchArticle
-} = require('./controllers/controllers.js');
-=======
-    getArticles,
-    getArticle
 } = require('./controllers/controllers_articles.js');
 const { 
     getTopics
 } = require('./controllers/controllers_topics.js');
->>>>>>> 1bd41834b6ccddb43ddb7dcdd7d4ef59c29b99cb
 
 const app = express();
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
-<<<<<<< HEAD
-app.get(/^\/api\/articles/, getArticles);
-app.patch(/^\/api\/articles/, patchArticle)
-=======
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticle);
->>>>>>> 1bd41834b6ccddb43ddb7dcdd7d4ef59c29b99cb
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.use("/*", (req,res) => {
     res.status(404).send("Path not found!")

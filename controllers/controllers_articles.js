@@ -1,6 +1,7 @@
 const {
     fetchArticles,
-    fetchArticle
+    fetchArticle,
+    alterArticle
 } = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
@@ -19,7 +20,18 @@ function getArticle(req,res,next) {
     .catch(next)
 }
 
+function patchArticle(req,res,next) {
+    let index = (req.params.article_id)
+    let voteChange = req.body.incVotes
+    alterArticle(index,voteChange)
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch(next)
+}
+
 module.exports = {
     getArticles,
-    getArticle
+    getArticle,
+    patchArticle
 }
