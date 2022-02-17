@@ -81,14 +81,6 @@ describe("GET /api/articles/:article_id", () => {
           expect(response.body.msg).toBe("Bad Request")
         })
     });
-    xtest("Status 204 when valid but empty :article_id", () => {
-      return request(app)
-        .get("/api/articles/727272")
-        .expect(204)
-        .then((response) => {
-          console.log(response.body.msg, "No data for ID")
-        })
-    });
 });
 
 let newVotes = { incVotes: 1 };
