@@ -23,7 +23,6 @@ function alterArticle(num, votes) {
                     ORDER BY article_id ASC;`)
     .then((data) => {
         if (!data.rows[num-1]) return checkArticleExists(num);
-        console.log(votes)
         let newVotes = data.rows[num-1].votes + votes
         return db.query(
             `UPDATE articles 
