@@ -162,6 +162,14 @@ describe("PATCH /api/articles/:article_id", () => {
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request")
       })
-      
+  });
+  test("Status 400 when incorrect PATCH data sent", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ hammerthekeyboard: 3 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request")
+      })
   });
 })
