@@ -18,10 +18,12 @@ function fetchArticle(num) {
 }
 
 function alterArticle(num, votes) {
+    if (typeof votes !== 'number') return Promise.reject({ status: 400, msg: 'Bad Request' })
     return db.query(`SELECT * FROM articles
                     ORDER BY article_id ASC;`)
     .then((data) => {
-        if (!data.rows[num]) return Promise.reject({ status: 404, msg: 'Invalid ID, no data found' });
+        if (!data.rows[num-1]) return checkArticleExists(num);
+        console.log(votes)
         let newVotes = data.rows[num-1].votes + votes
         return db.query(
             `UPDATE articles 
