@@ -153,7 +153,6 @@ describe("PATCH /api/articles/:article_id", () => {
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request")
       })
-      
   });
   test("Status 400 when no data sent", () => {
     return request(app)
@@ -173,3 +172,34 @@ describe("PATCH /api/articles/:article_id", () => {
       })
   });
 })
+
+describe("GET /api/users", () => {
+  test("Status 200", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+  });
+  test("returns an array of objects, each with the property 'username'", () => {
+      return request(app)
+          .get("/api/users")
+          .expect(200)
+      .then((response) => {
+          expect(Array.isArray(response.body)).toBe(true)
+          response.body.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String)
+              })
+            )
+          })
+      })
+  })
+  test("Status 404 when path entered incorrectly'", () => {
+    return request(app)
+        .get("/api/usars")
+        .expect(404)
+    .then((response) => {
+        expect(response.error.text).toBe("Path not found!")
+        })
+  })
+}); 
