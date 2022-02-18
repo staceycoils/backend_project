@@ -2,7 +2,8 @@ const express = require("express");
 
 const { 
     getArticles,
-    getArticle
+    getArticle,
+    patchArticle
 } = require('./controllers/controllers_articles.js');
 const { 
     getTopics
@@ -15,6 +16,7 @@ app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticle);
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.use("/*", (req,res) => {
     res.status(404).send("Path not found!")
