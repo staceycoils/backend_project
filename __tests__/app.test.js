@@ -42,6 +42,41 @@ describe("GET /api/topics", () => {
     })
 });
 
+describe("GET /api/articles/", () => {
+  test("Status 200", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+  });
+  test("returns an array of objects with the correct properties", () => {
+    return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach(article => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author:     expect.any(String),
+                title:      expect.any(String),
+                article_id: expect.any(Number),
+                topic:      expect.any(String),
+                created_at: expect.any(String),
+                votes:      expect.any(Number)
+              })
+            )
+          })
+      })
+  })
+  test("Array is sorted by date created in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy('created_at', { descending: true })
+      })
+  });
+});
+
 describe("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
@@ -171,7 +206,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("Bad Request")
       })
   });
-})
+});
 
 describe("GET /api/users", () => {
   test("Status 200", () => {
