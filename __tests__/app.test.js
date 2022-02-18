@@ -194,12 +194,4 @@ describe("GET /api/users", () => {
           })
       })
   })
-  test("Status 404 when path entered incorrectly'", () => {
-    return request(app)
-        .get("/api/usars")
-        .expect(404)
-    .then((response) => {
-        expect(response.error.text).toBe("Path not found!")
-        })
-  })
 }); 
