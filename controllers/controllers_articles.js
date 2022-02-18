@@ -7,7 +7,7 @@ const {
 function getArticles(req,res,next) {
     fetchArticles()
     .then((data) => {
-        res.status(200).send(data)
+        res.status(200).send({ 'articles': data })
     })
 }
 

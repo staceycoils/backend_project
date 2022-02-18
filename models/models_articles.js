@@ -2,9 +2,10 @@ const db = require('../db/connection.js')
 const {checkArticleExists} = require('../utils.js')
 
 function fetchArticles() {
-    return db.query("SELECT * FROM articles;")
-        .then((data) => {
-            return data.rows
+    return db.query(`SELECT author, title, article_id, topic, created_at, votes FROM articles
+                    ORDER BY created_at DESC;`)
+        .then(({ rows }) => {
+            return rows
         })
 }
 
