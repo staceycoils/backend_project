@@ -183,13 +183,10 @@ describe("GET /api/users", () => {
       return request(app)
           .get("/api/users")
           .expect(200)
-      .then((response) => {
-          expect(Array.isArray(response.body)).toBe(true)
-          response.body.forEach((user) => {
-            expect(user).toEqual(
-              expect.objectContaining({
-                username: expect.any(String)
-              })
+      .then(({ body }) => {
+          expect(Array.isArray(body.usernames)).toBe(true)
+          body.usernames.forEach((user) => {
+            expect(user).toEqual(expect.any(String)
             )
           })
       })

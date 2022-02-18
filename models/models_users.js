@@ -1,9 +1,13 @@
 const db = require('../db/connection.js')
 
 function fetchUsers() {
-    return db.query("SELECT username FROM users WHERE username NOT LIKE 'NULL';")
+    return db.query("SELECT username FROM users;")
         .then((data) => {
-            return data.rows
+            let users = []
+            data.rows.forEach((user) => {
+                users.push(user.username)
+            })
+            return users
         })
 }
 
