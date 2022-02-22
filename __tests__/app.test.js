@@ -77,7 +77,7 @@ describe("GET /api/articles/", () => {
   });
 });
 
-describe("GET /api/articles/:article_id", () => {
+describe.only("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
         .get("/api/articles/3")
@@ -85,21 +85,34 @@ describe("GET /api/articles/:article_id", () => {
     });
     test("returns a specified object from the database", () => {
         return request(app)
-            .get("/api/articles/3")
-            .expect(200)
-        .then(() => {
+          .get("/api/articles/3")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).toEqual(
+              expect.objectContaining({
+                  article_id: 3,
+                  title: "Eight pug gifs that remind me of mitch",
+                  topic: "mitch",
+                  author: "icellusedkars",
+                  body: "some gifs",
+                  created_at: '2020-11-03T09:12:00.000Z',
+                  votes: 0,
+                })
+            )
+          })
+    });
+    test("returns an object including the 'comment count' property", () => {
+      return request(app)
+        .get("/api/articles/3")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual(
             expect.objectContaining({
-                article_id: 3,
-                title: "Eight pug gifs that remind me of mitch",
-                topic: "mitch",
-                author: "icellusedkars",
-                body: "some gifs",
-                created_at: '2020-11-03T09:12:00.000Z',
-                votes: 0,
-              },
-            );
+                comment_count: 2,
+              })
+          )
         })
-    })
+    });
     test("Status 404 when valid but non-existant :article_id", () => {
       return request(app)
         .get("/api/articles/4321567")
