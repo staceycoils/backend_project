@@ -14,7 +14,13 @@ function fetchArticle(num) {
                     WHERE article_id = ${num};`)
         .then((data) => {
             if (!data.rows[0]) return checkArticleExists(num)
-            return data.rows[0];
+            return db.query(`SELECT comment_id FROM comments
+                            WHERE article_id = ${num};`)
+                .then((commentData) => {
+                    if (!commentData.rows.length) data.rows[0].comment_count = 0;
+                    data.rows[0].comment_count = (commentData.rows.length);
+                    return data.rows[0];
+                })
         })
 }
 
