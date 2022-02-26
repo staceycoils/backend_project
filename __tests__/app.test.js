@@ -13,8 +13,8 @@ describe("GET /not-a-path", () => {
       return request(app)
         .get("/not-a-path")
         .expect(404)
-        .then((response) => {
-          expect(response.error.text).toBe("Path not found!")
+        .then(({ error }) => {
+          expect(error.text).toBe("Path not found!")
         })
   })
 })
@@ -29,9 +29,9 @@ describe("GET /api/topics", () => {
         return request(app)
             .get("/api/topics")
             .expect(200)
-        .then((response) => {
-            expect(response.body).toHaveLength(3);
-            response.body.forEach((topic) => {
+        .then(({ body }) => {
+            expect(body).toHaveLength(3);
+            body.forEach((topic) => {
                 expect(topic).toEqual(
                   {
                     description: expect.any(String),
@@ -77,7 +77,7 @@ describe("GET /api/articles/", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
         .get("/api/articles/3")
@@ -117,16 +117,16 @@ describe.only("GET /api/articles/:article_id", () => {
       return request(app)
         .get("/api/articles/4321567")
         .expect(404)
-        .then((response) => {
-          expect(response.body.msg).toBe("Invalid ID, no data found")
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid ID, no data found")
         })
     });
     test("Status 400 when invalid :article_id", () => {
       return request(app)
         .get("/api/articles/notanID")
         .expect(400)
-        .then((response) => {
-          expect(response.body.msg).toBe("Bad Request")
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request")
         })
     });
 });
@@ -145,9 +145,9 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/3")
       .send(newVotes)
       .expect(200)
-      .then((response) => {
-        expect(Object.keys(response.body)).toHaveLength(7);
-        expect(response.body).toEqual({
+      .then(({ body }) => {
+        expect(Object.keys(body)).toHaveLength(7);
+        expect(body).toEqual({
             article_id: 3,
             title: "Eight pug gifs that remind me of mitch",
             topic: "mitch",
@@ -170,8 +170,8 @@ describe("PATCH /api/articles/:article_id", () => {
           .patch("/api/articles/3")
           .send(newVotes)
           .expect(200)
-          .then((response) => {
-            expect(response.body.votes).toBe(-99)
+          .then(({ body }) => {
+            expect(body.votes).toBe(-99)
           })
       })
   })
@@ -180,8 +180,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/4321567")
       .send(newVotes)
       .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("Invalid ID, no data found")
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, no data found")
       })
   });
   test("Status 400 when invalid :article_id", () => {
@@ -189,8 +189,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/potato")
       .send(newVotes)
       .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Bad Request")
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
       })
   });
   test("Status 400 when invalid data sent", () => {
@@ -198,16 +198,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/3")
       .send({ incVotes: "bad data" })
       .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Bad Request")
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
       })
   });
   test("Status 400 when no data sent", () => {
     return request(app)
       .patch("/api/articles/3")
       .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Bad Request")
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
       })
   });
   test("Status 400 when incorrect PATCH data sent", () => {
@@ -215,8 +215,58 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/3")
       .send({ hammerthekeyboard: 3 })
       .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Bad Request")
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+});
+
+describe.only("GET /api/articles/:article_id/comments", () => {
+  test("Status 200", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      })
+  test("Returns an array of objects with the correct properties", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              'comment_id': expect.any(Number), 
+              'votes': expect.any(Number), 
+              'created_at': expect.any(String), 
+              'author': expect.any(String), 
+              'body': expect.any(String)
+            })
+          )
+        })
+      })
+  });
+  test("Status 204 if no comments for article", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(204)
+      .then(({ res }) => {
+        expect(res.statusMessage).toBe("No Content")
+      })
+  });
+  test("Status 404 when valid but non-existant :article_id", () => {
+    return request(app)
+      .get("/api/articles/4321567/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, no data found")
+      })
+  });
+  test("Status 400 when invalid :article_id", () => {
+    return request(app)
+      .get("/api/articles/notanID/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
       })
   });
 });
