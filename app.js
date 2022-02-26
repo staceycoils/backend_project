@@ -3,7 +3,8 @@ const express = require("express");
 const { 
     getArticles,
     getArticle,
-    patchArticle
+    patchArticle,
+    getArtComments
 } = require('./controllers/controllers_articles.js');
 const { 
     getTopics
@@ -20,6 +21,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
+app.get("/api/articles/:article_id/comments", getArtComments);
 
 app.get("/api/users", getUsers)
 

@@ -2,7 +2,7 @@ const db = require('../db/connection.js')
 const {checkArticleExists} = require('../utils.js')
 
 function fetchArticles() {
-    return db.query(`SELECT author, title, article_id, topic, created_at, votes FROM articles
+    return db.query(`SELECT * FROM articles
                     ORDER BY created_at DESC;`)
         .then(({ rows }) => {
             return rows
@@ -43,8 +43,18 @@ function alterArticle(num, votes) {
     })
 }
 
+function fetchArtComments(num) {
+    return db.query(`SELECT comment_id, votes, created_at, author, body FROM comments
+                    WHERE article_id = ${[num]};`)
+        .then(({ rows }) => {
+            if (!rows[0]) return checkArticleExists(num)
+            return rows
+        })
+}
+
 module.exports = {
     fetchArticles,
     fetchArticle,
-    alterArticle
+    alterArticle,
+    fetchArtComments
 };
