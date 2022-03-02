@@ -289,6 +289,66 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+let newComment = { 'username': 'lurker' , 'body': 'this is a test comment' };
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('Status 201', () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+  });
+  test('Responds with the posted comment', () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual({ 
+          'author': 'lurker', 
+          'body': 'this is a test comment',
+          'created_at': expect.any(String),
+          'article_id': 2,
+          'votes': 0,
+          'comment_id': 19
+        })
+      })
+  });
+  test('POST method adds a new comment each time', () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        return request(app)
+          .post("/api/articles/2/comments")
+          .send(newComment)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment_id).toBe(20)
+          })
+      });
+  });
+  test('Status 400 when username is not in "users" database', () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send({ 'username': 'notInUsers' , 'body': 'this is a test comment' })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test('Status 404 when valid but non-existant :article_id', () => {
+    return request(app)
+      .post("/api/articles/4321567/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, no data found")
+      })
+  });
+});
+
 describe("GET /api/users", () => {
   test("Status 200", () => {
     return request(app)
