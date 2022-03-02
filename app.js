@@ -4,7 +4,8 @@ const {
     getArticles,
     getArticle,
     patchArticle,
-    getArtComments
+    getArtComments,
+    postArtComments,
 } = require('./controllers/controllers_articles.js');
 const { 
     getTopics
@@ -21,7 +22,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
-app.get("/api/articles/:article_id/comments", getArtComments);
+app.get("/api/articles/:article_id/comments", getArtComments)
+app.post("/api/articles/:article_id/comments", postArtComments)
 
 app.get("/api/users", getUsers)
 
@@ -35,7 +37,6 @@ app.use((err,req,res,next) => {
     } else if (err.code !== 'undefined') {
         res.status(400).send({ 'msg': 'Bad Request' })
     } else {
-        console.log(err);
         res.status(500).send({ 'msg': 'Internal Server Error' })
     }
 })
