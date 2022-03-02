@@ -4,8 +4,15 @@ const {checkArticleExists} = require('../utils.js')
 function fetchArticles() {
     return db.query(`SELECT * FROM articles
                     ORDER BY created_at DESC;`)
-        .then(({ rows }) => {
-            return rows
+        .then((articles) => {
+            articles.rows.map((article) => article.comment_count = 0)
+            return db.query(`SELECT * FROM comments;`)
+                .then((comments) => {
+                    comments.rows.forEach(comment => {
+                            articles.rows[comment.article_id - 1].comment_count += 1
+                    });
+                    return articles.rows
+                })
         })
 }
 
