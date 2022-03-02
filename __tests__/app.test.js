@@ -75,6 +75,24 @@ describe("GET /api/articles/", () => {
         expect(body.articles).toBeSortedBy('created_at', { descending: true })
       })
   });
+  test("each object includes comment_count property", () => {
+    return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach(article => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                comment_count:     expect.any(Number)
+              })
+            )
+          })
+          expect(body.articles[0].comment_count).toBe(11)
+          expect(body.articles[1].comment_count).toBe(0)
+          expect(body.articles[2].comment_count).toBe(2)
+          expect(body.articles[8].comment_count).toBe(2)
+      })
+  })
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -221,7 +239,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id/comments", () => {
+describe("GET /api/articles/:article_id/comments", () => {
   test("Status 200", () => {
     return request(app)
       .get("/api/articles/5/comments")
