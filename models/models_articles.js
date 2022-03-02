@@ -59,9 +59,26 @@ function fetchArtComments(num) {
         })
 }
 
+function addArtComments(num, comment) {
+    return db.query(`SELECT * FROM articles
+                    ORDER BY article_id ASC;`)
+            .then((data) => {
+                if (!data.rows[num-1]) return checkArticleExists(num);
+                return db.query(
+                    `INSERT INTO comments (author, body, article_id)
+                    VALUES ('${comment.username}', '${comment.body}', 2) 
+                    RETURNING * ;`)
+                    .then(({ rows }) => {
+                        if (!rows[0]) return checkArticleExists(num)
+                        return rows[0]
+                    })
+            })
+};
+
 module.exports = {
     fetchArticles,
     fetchArticle,
     alterArticle,
-    fetchArtComments
+    fetchArtComments,
+    addArtComments
 };

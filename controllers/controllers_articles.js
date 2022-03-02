@@ -2,7 +2,8 @@ const {
     fetchArticles,
     fetchArticle,
     alterArticle,
-    fetchArtComments
+    fetchArtComments,
+    addArtComments
 } = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
@@ -40,9 +41,19 @@ function getArtComments(req,res,next) {
     .catch(next)
 }
 
+function postArtComments(req,res,next) {
+    let index = (req.params.article_id)
+    addArtComments(index, req.body)
+    .then((data) => {
+        res.status(201).send(data)
+    })
+    .catch(next)
+}
+
 module.exports = {
     getArticles,
     getArticle,
     patchArticle,
-    getArtComments
+    getArtComments,
+    postArtComments
 }
