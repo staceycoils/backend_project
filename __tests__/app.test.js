@@ -95,6 +95,106 @@ describe("GET /api/articles/", () => {
   })
 });
 
+describe("GET /api/articles queries", () => {
+  test("Status 200", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+  });
+  test("Accepts 'sort_by' queries, returning articles ordered by the specified category", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body })=>{
+        expect(body.articles).toBeSortedBy('title', { descending: true })
+      })
+  });
+  test("Accepts 'order' queries, returning articles ordered in the specified pattern", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body })=>{
+        expect(body.articles).toBeSortedBy('created_at', { descending: false })
+      })
+  });
+  test("Accepts 'topic' queries, returning articles with specified topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body })=>{
+        expect(body.articles.length).toBe(1)
+        body.articles.forEach(article => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: 'cats'
+            })
+          )
+        })
+      })
+  });
+  test("Accepts combined queries", () => {
+    return request(app)
+      .get("/api/articles?order=asc&sort_by=title")
+      .expect(200)
+      .then(({ body })=>{
+        expect(body.articles).toBeSortedBy('title', { descending: false })
+      })
+  });
+  test("Accepts combined queries with 'topic'", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&order=asc&sort_by=title")
+      .expect(200)
+      .then(({ body })=>{
+        expect(body.articles.length).toBe(11)
+        expect(body.articles).toBeSortedBy('title', { descending: false })
+        body.articles.forEach(article => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: 'mitch'
+            })
+          )
+        })
+      })
+    });
+  test("Status 400 when incorrect sort data given", () => {
+    return request(app)
+      .get("/api/articles?sort_by=cooking_time")
+      .expect(400)
+      .then(({ body })=>{
+        expect(body.msg).toBe("Bad Request")
+      })
+    });
+  test("Status 400 when incorrect order data given", () => {
+    return request(app)
+      .get("/api/articles?order=vertical")
+      .expect(400)
+      .then(({ body })=>{
+        expect(body.msg).toBe("Bad Request")
+      })
+    });
+  test("Returns default list if query is formatted incorrectly", () => {
+    return request(app)
+      .get("/api/articles?topicmitchorderascsortbytitle")
+      .expect(200)
+      .then(({ body })=>{
+        expect(body.articles.length).toBe(12)
+        body.articles.forEach(article => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author:         expect.any(String),
+              title:          expect.any(String),
+              article_id:     expect.any(Number),
+              topic:          expect.any(String),
+              created_at:     expect.any(String),
+              votes:          expect.any(Number),
+              comment_count:  expect.any(Number)
+            })
+          )
+        })
+    })
+  });
+});
+
 describe("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
