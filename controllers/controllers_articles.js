@@ -7,10 +7,11 @@ const {
 } = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
-    fetchArticles()
+    fetchArticles(req.query)
     .then((data) => {
         res.status(200).send({ 'articles': data })
     })
+    .catch(next)
 }
 
 function getArticle(req,res,next) {
