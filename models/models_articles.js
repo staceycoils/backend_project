@@ -1,18 +1,24 @@
 const db = require('../db/connection.js')
-const {checkArticleExists} = require('../utils.js')
+const {checkArticleExists,checkQueryTerms} = require('../utils.js')
 
-function fetchArticles() {
+function fetchArticles(search) {
+    let {sort_by,topic,order} = checkQueryTerms(search)
     return db.query(`SELECT * FROM articles
-                    ORDER BY created_at DESC;`)
+                    ${topic}
+                    ORDER BY ${sort_by} ${order};`)
         .then((articles) => {
             articles.rows.map((article) => article.comment_count = 0)
             return db.query(`SELECT * FROM comments;`)
                 .then((comments) => {
                     comments.rows.forEach(comment => {
+                            if (!articles.rows[comment.article_id - 1]) return
                             articles.rows[comment.article_id - 1].comment_count += 1
                     });
                     return articles.rows
                 })
+        })
+        .catch(()=>{
+          return Promise.reject({ status: 400, msg: 'Bad Request' });
         })
 }
 

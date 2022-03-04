@@ -26,9 +26,18 @@ function checkCommentExists(num) {
     })
 }
 
+function checkQueryTerms(search) {
+  const searchKeys = {};
+  !search.sort_by ? searchKeys.sort_by = 'created_at' : searchKeys.sort_by = search.sort_by.toLowerCase();
+  !search.topic ? searchKeys.topic = '' : searchKeys.topic = `WHERE topic = '${search.topic}'`;
+  !search.order ? searchKeys.order = 'DESC' : searchKeys.order = search.order.toUpperCase();
+  return searchKeys
+}
+
 module.exports = {
     checkArticleExists,
-    checkCommentExists
+    checkCommentExists,
+    checkQueryTerms
 };
 
 
