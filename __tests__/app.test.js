@@ -449,6 +449,51 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
 });
 
+describe('DELETE /api/comments/:comment_id', () => {
+  test('Status 204', () => {
+    return request(app)
+        .delete("/api/comments/15")
+        .expect(204)
+  });
+  test('Responds with an empty body', () => {
+    return request(app)
+        .delete("/api/comments/15")
+        .expect(204)
+        .then((response) => {
+          expect(response.body).toEqual({})
+        })
+  });
+  test('GET requests show updated comment counts', () => {
+    return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return request(app)
+          .get("/api/articles/9/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.length).toBe(1)
+          })
+        })
+  });
+  test('Status 404 when valid id but no comment', () => {
+    return request(app)
+        .delete("/api/comments/97")
+        .expect(404)
+        .then(({body}) => {
+          expect(body.msg).toBe('No comment to delete')
+        })
+  });
+  test('Status 400 when inavlid comment id', () => {
+    return request(app)
+        .delete("/api/comments/9or7")
+        .expect(400)
+        .then(({body}) => {
+          expect(body.msg).toBe('Bad Request')
+        })
+  });
+});
+
 describe("GET /api/users", () => {
   test("Status 200", () => {
     return request(app)
