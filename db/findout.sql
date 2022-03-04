@@ -17,9 +17,8 @@ SELECT * FROM articles
 WHERE topic = 'cats'
 ORDER BY created_at DESC;
 
-SELECT * FROM articles
-WHERE topic = 'mitch'
-ORDER BY created_at DESC;
+SELECT * FROM comments
+ORDER BY article_id DESC;
 
 SELECT * FROM articles
 ORDER BY created_at DESC;
