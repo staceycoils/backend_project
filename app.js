@@ -13,6 +13,9 @@ const {
 const { 
     getUsers
 } = require('./controllers/controllers_users.js');
+const { 
+    deleteComment
+} = require('./controllers/controllers_comments.js');
 
 const app = express();
 app.use(express.json());
@@ -22,8 +25,10 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
-app.get("/api/articles/:article_id/comments", getArtComments)
-app.post("/api/articles/:article_id/comments", postArtComments)
+app.get("/api/articles/:article_id/comments", getArtComments);
+app.post("/api/articles/:article_id/comments", postArtComments);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.get("/api/users", getUsers)
 
