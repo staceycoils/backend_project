@@ -6,7 +6,7 @@ const {
 function getTopics(req,res) {
     fetchTopics()
         .then((data) => {
-            res.status(200).send(data)
+            res.status(200).send({'topics': data})
         })
 }
 
