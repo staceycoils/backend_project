@@ -1,4 +1,18 @@
 const db = require('./db/connection.js')
+const { readFile } = require('fs');
+const fs = require('fs/promises');
+
+
+function getApi(req,res,next) {
+  fs.readFile('./endpoints.json')
+      .then((data) => {
+          return data
+      })
+      .then((data) => {
+          res.status(200).send(data)
+      })
+      .catch(next)
+}
 
 function checkArticleExists(num) {
     return db.query('SELECT * FROM articles WHERE article_id = $1;',
@@ -35,6 +49,7 @@ function checkQueryTerms(search) {
 }
 
 module.exports = {
+    getApi,
     checkArticleExists,
     checkCommentExists,
     checkQueryTerms

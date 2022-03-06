@@ -19,6 +19,59 @@ describe("GET /not-a-path", () => {
   })
 })
 
+describe('GET /api', () => {
+  test('Status 200', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+  });
+  test('Returns a JSON', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        expect(JSON.parse(body)).toBeTruthy()
+      })
+  });
+  test('Returns all available endpoints', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        const endpoints = JSON.parse(body)
+        expect(Object.keys(endpoints)).toEqual(
+          expect.arrayContaining([
+          'GET /api' ,
+          'GET /api/topics' ,
+          'GET /api/articles' ,
+          'GET /api/articles/:article_id' ,
+          'PATCH /api/articles/:article_id' ,
+          'GET /api/articles/:article_id/comments' ,
+          'POST /api/articles/:article_id/comments' ,
+          'DELETE /api/comments/:comment_id' ,
+          'GET /api/users' ,
+        ]))
+      })
+  });
+  test('Lists a description and example response for each endpoint ("/api" not included)', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        const endpoints = JSON.parse(body)
+        delete endpoints['GET /api']
+        for (const endpoint in endpoints) {
+          expect(endpoints[endpoint]).toEqual(
+            expect.objectContaining({
+              "description": expect.any(String),
+              "exampleResponse": expect.any(Object),
+            })
+          )
+        }
+      })
+  })
+});
+
 describe("GET /api/topics", () => {
     test("Status 200", () => {
       return request(app)
@@ -30,8 +83,8 @@ describe("GET /api/topics", () => {
             .get("/api/topics")
             .expect(200)
         .then(({ body }) => {
-            expect(body).toHaveLength(3);
-            body.forEach((topic) => {
+            expect(body.topics).toHaveLength(3);
+            body.topics.forEach((topic) => {
                 expect(topic).toEqual(
                   {
                     description: expect.any(String),
@@ -206,7 +259,7 @@ describe("GET /api/articles/:article_id", () => {
           .get("/api/articles/3")
           .expect(200)
           .then(({ body }) => {
-            expect(body).toEqual(
+            expect(body.article).toEqual(
               expect.objectContaining({
                   article_id: 3,
                   title: "Eight pug gifs that remind me of mitch",
@@ -224,7 +277,7 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/3")
         .expect(200)
         .then(({ body }) => {
-          expect(body).toEqual(
+          expect(body.article).toEqual(
             expect.objectContaining({
                 comment_count: 2,
               })
@@ -264,8 +317,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newVotes)
       .expect(200)
       .then(({ body }) => {
-        expect(Object.keys(body)).toHaveLength(7);
-        expect(body).toEqual({
+        expect(Object.keys(body.article)).toHaveLength(7);
+        expect(body.article).toEqual({
             article_id: 3,
             title: "Eight pug gifs that remind me of mitch",
             topic: "mitch",
@@ -289,7 +342,7 @@ describe("PATCH /api/articles/:article_id", () => {
           .send(newVotes)
           .expect(200)
           .then(({ body }) => {
-            expect(body.votes).toBe(-99)
+            expect(body.article.votes).toBe(-99)
           })
       })
   })
@@ -350,7 +403,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/5/comments")
       .expect(200)
       .then(({ body }) => {
-        body.forEach((comment) => {
+        body.comments.forEach((comment) => {
           expect(comment).toEqual(
             expect.objectContaining({
               'comment_id': expect.any(Number), 
@@ -404,7 +457,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
-        expect(body).toEqual({ 
+        expect(body.comment).toEqual({ 
           'author': 'lurker', 
           'body': 'this is a test comment',
           'created_at': expect.any(String),
@@ -425,7 +478,7 @@ describe('POST /api/articles/:article_id/comments', () => {
           .send(newComment)
           .expect(201)
           .then(({ body }) => {
-            expect(body.comment_id).toBe(20)
+            expect(body.comment.comment_id).toBe(20)
           })
       });
   });
@@ -472,7 +525,7 @@ describe('DELETE /api/comments/:comment_id', () => {
           .get("/api/articles/9/comments")
           .expect(200)
           .then(({ body }) => {
-            expect(body.length).toBe(1)
+            expect(body.comments.length).toBe(1)
           })
         })
   });

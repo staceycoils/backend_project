@@ -1,27 +1,94 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "returns a json of all available endpoints on the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
+    "description": "returns an array of all topics",
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
+      "topics": [
+        { "slug" : "coding" }, 
+        {"description": "articles about coding"}
+      ]}
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "returns an array of all articles' summary, sorted by latest by default",
+    "queries": ["order","topic","sort_by"],
+    "queries-note": "returns the full array if query is formatted incorrectly",
+    "exampleResponse": { 
+      "articles": [{
+        "article_id": 1,
+        "author": "stacey_coils",
+        "title": "How to code a backend server",
+        "topic": "coding",
+        "created_at": "2022-02-22T14:22:22.000Z",
+        "votes": 0
+      }]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "returns a specifed article as an object including the text body",
     "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
-        }
-      ]
+      "article": {
+          "article_id": 1,
+          "author": "stacey_coils",
+          "title": "How to code a backend server",
+          "body": "An article decribing how to code a backend server with about 40% accuracy",
+          "topic": "coding",
+          "created_at": "2022-02-22T14:22:22.000Z",
+          "votes": 0,
+          "comment_count": 0
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates a specified category on the selected article and returns the updated entry",
+    "patchOptions": "incVotes",
+    "exampleSubmission": { "incVotes": 100 },
+    "exampleResponse": {
+      "article": {
+          "article_id": 1,
+          "author": "stacey_coils",
+          "title": "How to code a backend server",
+          "body": "An article decribing how to code a backend server with about 40% accuracy",
+          "topic": "coding",
+          "created_at": "2022-02-22T14:22:22.000Z",
+          "votes": 100,
+          "comment_count": 0
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "returns an array of comments for a specified article",
+    "exampleResponse": {
+      "comments": [{
+        "comment_id": "1", 
+        "votes": "0", 
+        "created_at": "2022", 
+        "author": "stacey_coils", 
+        "body": "I'm replying to this article"
+      }]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Adds a new comment to a specified article, provided the user is in the users database",
+    "exampleSubmission": { "username": "lurker" , "body": "this is a test comment" },
+    "exampleResponse": { 
+      "author": "lurker", 
+      "body": "this is a test comment",
+      "created_at": 2022,
+      "article_id": 1,
+      "votes": 0,
+      "comment_id": 19
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes the selected comment. will return an empty object",
+    "exampleResponse": {}
+  },
+  "GET /api/users": {
+    "description": "returns an array of all users",
+    "exampleResponse": {
+      "users": [ "stacey_coils" , "lurker" , "root_2" ]
     }
   }
 }
