@@ -95,7 +95,7 @@ describe("GET /api/topics", () => {
     })
 });
 
-describe("GET /api/articles/", () => {
+describe.only("GET /api/articles/", () => {
   test("Status 200", () => {
     return request(app)
       .get("/api/articles")
@@ -115,6 +115,11 @@ describe("GET /api/articles/", () => {
                 topic:      expect.any(String),
                 created_at: expect.any(String),
                 votes:      expect.any(Number)
+              })
+            );
+            expect(article).toEqual(
+              expect.not.objectContaining({
+                body: expect.any(String)
               })
             )
           })
