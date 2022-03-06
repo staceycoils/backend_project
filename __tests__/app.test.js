@@ -571,3 +571,31 @@ describe("GET /api/users", () => {
       })
   })
 }); 
+
+describe('GET /api/users/:username', () => {
+  test('Status 200', () => {
+    return request(app)
+      .get('/api/users/lurker')
+      .expect(200)
+  });
+  test('Returns the selected user with the correct properties', () => {
+    return request(app)
+      .get('/api/users/lurker')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toEqual({
+            username: 'lurker',
+            avatar_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+            name: 'do_nothing'
+        })
+      })
+  });
+  test('Status 404 when username is not on record', () => {
+    return request(app)
+      .get('/api/users/staceycoils')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No username on record")
+      })
+  });
+});
