@@ -525,7 +525,6 @@ describe('DELETE /api/comments/:comment_id', () => {
           .get("/api/articles/9/comments")
           .expect(200)
           .then(({ body }) => {
-            console.log(body)
             expect(body.comments.length).toBe(1)
           })
         })
