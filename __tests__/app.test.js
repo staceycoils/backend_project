@@ -95,7 +95,7 @@ describe("GET /api/topics", () => {
     })
 });
 
-describe.only("GET /api/articles/", () => {
+describe("GET /api/articles/", () => {
   test("Status 200", () => {
     return request(app)
       .get("/api/articles")
