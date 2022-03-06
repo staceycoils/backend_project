@@ -3,7 +3,7 @@ const {checkArticleExists,checkQueryTerms} = require('../utils.js')
 
 function fetchArticles(search) {
     let {sort_by,topic,order} = checkQueryTerms(search)
-    return db.query(`SELECT * FROM articles
+    return db.query(`SELECT article_id, author, created_at, title, topic, votes FROM articles
                     ${topic}
                     ORDER BY ${sort_by} ${order};`)
         .then((articles) => {
