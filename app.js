@@ -1,5 +1,8 @@
 const express = require("express");
 
+const {
+    getApi
+} = require('./utils')
 const { 
     getArticles,
     getArticle,
@@ -19,6 +22,8 @@ const {
 
 const app = express();
 app.use(express.json());
+
+app.get('/api', getApi)
 
 app.get("/api/topics", getTopics);
 
