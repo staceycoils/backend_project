@@ -19,7 +19,7 @@ describe("GET /not-a-path", () => {
   })
 })
 
-describe.only('GET /api', () => {
+describe('GET /api', () => {
   test('Status 200', () => {
     return request(app)
       .get('/api')
@@ -39,7 +39,6 @@ describe.only('GET /api', () => {
       .expect(200)
       .then(({ body }) => {
         const endpoints = JSON.parse(body)
-        console.log(endpoints)
         expect(Object.keys(endpoints)).toEqual(
           expect.arrayContaining([
           'GET /api' ,
@@ -526,7 +525,8 @@ describe('DELETE /api/comments/:comment_id', () => {
           .get("/api/articles/9/comments")
           .expect(200)
           .then(({ body }) => {
-            expect(body.length).toBe(1)
+            console.log(body)
+            expect(body.comments.length).toBe(1)
           })
         })
   });
