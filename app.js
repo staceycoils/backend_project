@@ -14,7 +14,8 @@ const {
     getTopics
 } = require('./controllers/controllers_topics.js');
 const { 
-    getUsers
+    getUsers,
+    getUser
 } = require('./controllers/controllers_users.js');
 const { 
     deleteComment
@@ -36,6 +37,7 @@ app.post("/api/articles/:article_id/comments", postArtComments);
 app.delete("/api/comments/:comment_id", deleteComment);
 
 app.get("/api/users", getUsers)
+app.get("/api/users/:username", getUser)
 
 app.use("/*", (req,res) => {
     res.status(404).send("Path not found!")
