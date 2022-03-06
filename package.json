@@ -6,9 +6,11 @@
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
     "test": "jest",
     "watch": "jest --watch",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
