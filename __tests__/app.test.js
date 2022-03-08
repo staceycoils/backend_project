@@ -253,6 +253,100 @@ describe("GET /api/articles queries", () => {
   });
 });
 
+let newArticle = {
+  "title": "How to create new articles on the new website NC-News",
+  "author": "lurker",
+  "body": "Press buttons then do the tip tap noise",
+  "topic": "cats",
+}
+
+describe('POST /api/articles', () => {
+  test('Status 201', () => {
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(201)
+  });
+  test('Status 201', () => {
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(201)
+    .then(({ body })=>{
+      expect(body.article).toEqual({
+        'title': newArticle.title,
+        'author': newArticle.author,
+        'body': newArticle.body ,
+        'topic': newArticle.topic,
+        'article_id': 13,
+        'votes': 0,
+        'created_at': expect.any(String),
+        'comment_count': 0,
+      })
+    })
+  });
+  test('POST adds a new article each time', () => {
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(201)
+    .then((data)=>{
+      return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body })=>{
+        expect(body.article.article_id).toBe(14)
+      })
+    });
+  });
+  test('Status 400 when username is not in "users" database', () => {
+    const newArticleBadUser = {...newArticle}
+    newArticleBadUser.author = 'notInUsers'
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticleBadUser)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test('Status 400 when topic is not in "topics" database', () => {
+    const newArticleBadTopic = {...newArticle}
+    newArticleBadTopic.topic = 'notInTopics'
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticleBadTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test('New article can be called by a GET request', () => {
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticle)
+      .expect(201)
+      .then(() => {
+        return request(app)
+        .get("/api/articles/13")
+        .expect(200)
+        .then(({body}) => {
+          expect(body.article).toEqual({
+            'title': newArticle.title,
+            'author': newArticle.author,
+            'body': newArticle.body ,
+            'topic': newArticle.topic,
+            'article_id': 13,
+            'votes': 0,
+            'created_at': expect.any(String),
+            'comment_count': 0,
+          })
+        })
+      })
+  });
+});
+
 describe("GET /api/articles/:article_id", () => {
     test("Status 200", () => {
       return request(app)
