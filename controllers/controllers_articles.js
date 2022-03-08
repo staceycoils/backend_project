@@ -1,5 +1,6 @@
 const {
     fetchArticles,
+    addArticle,
     fetchArticle,
     alterArticle,
     fetchArtComments,
@@ -10,6 +11,14 @@ function getArticles(req,res,next) {
     fetchArticles(req.query)
     .then((data) => {
         res.status(200).send({ 'articles': data })
+    })
+    .catch(next)
+}
+
+function postArticle(req,res,next) {
+    addArticle(req.body)
+    .then((data) => {
+        res.status(201).send({ 'article': data })
     })
     .catch(next)
 }
@@ -53,6 +62,7 @@ function postArtComments(req,res,next) {
 
 module.exports = {
     getArticles,
+    postArticle,
     getArticle,
     patchArticle,
     getArtComments,

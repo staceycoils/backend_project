@@ -6,6 +6,7 @@ const {
 } = require('./utils')
 const { 
     getArticles,
+    postArticle,
     getArticle,
     patchArticle,
     getArtComments,
@@ -32,6 +33,7 @@ app.get('/api', getApi)
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
+app.post("/api/articles", postArticle)
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
 app.get("/api/articles/:article_id/comments", getArtComments);

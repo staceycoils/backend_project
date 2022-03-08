@@ -22,6 +22,18 @@ function fetchArticles(search) {
         })
 }
 
+function addArticle(article) {
+    const { title, author, body, topic } = article
+        return db.query(
+            `INSERT INTO articles (title, author, body, topic)
+            VALUES ('${title}', '${author}', '${body}', '${topic}') 
+            RETURNING * ;`)
+            .then(({ rows }) => {
+                rows[0].comment_count=0
+                return rows[0]
+            })
+};
+
 function fetchArticle(num) {
     return db.query(`SELECT * FROM articles
                     WHERE article_id = ${num};`)
@@ -83,6 +95,7 @@ function addArtComments(num, comment) {
 
 module.exports = {
     fetchArticles,
+    addArticle,
     fetchArticle,
     alterArticle,
     fetchArtComments,
