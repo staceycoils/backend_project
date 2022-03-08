@@ -507,6 +507,92 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
 });
 
+describe('PATCH /api/comments/:comment_id', () => { 
+  test('Status 200', () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(200)
+  });
+  test("Returns the updated comment", () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+            comment_id: 1,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: -84,
+            author: "butter_bridge",
+            article_id: 9,
+            created_at: expect.any(String),
+          },
+        );
+      });
+  })
+  test("Runs multiple times", () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(200)
+      .then(() => {
+        newVotes.incVotes = 101;
+        return request(app)
+          .patch('/api/comments/1')
+          .send(newVotes)
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comment.votes).toBe(17)
+          })
+      })
+  })
+  test("Status 404 when valid but non-existant :comment_id", () => {
+    return request(app)
+      .patch("/api/comments/4321567")
+      .send(newVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, no data found")
+      })
+  });
+  test("Status 400 when invalid :comment_id", () => {
+    return request(app)
+      .patch('/api/comments/potato')
+      .send(newVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test("Status 400 when invalid data sent", () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({ incVotes: "bad data" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test("Status 400 when no data sent", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test("Status 400 when incorrect PATCH data sent", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ hammerthekeyboard: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+});
+
 describe('DELETE /api/comments/:comment_id', () => {
   test('Status 204', () => {
     return request(app)
