@@ -491,6 +491,51 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+describe.only("DELETE /api/articles/:article_id", () => {
+  test('Status 204', () => {
+    return request(app)
+      .delete('/api/articles/1')
+      .expect(204)
+  });
+  test('Responds with an empty body', () => {
+    return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then((response) => {
+          expect(response.body).toEqual({})
+        })
+  });
+  test('Status 404 for GET requests for deleted article id', () => {
+    return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then(() => {
+          return request(app)
+          .get("/api/articles/1")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Invalid ID, no data found')
+          })
+        })
+  });
+  test('Status 404 when valid id but no article', () => {
+    return request(app)
+        .delete("/api/articles/97")
+        .expect(404)
+        .then(({body}) => {
+          expect(body.msg).toBe('No article to delete')
+        })
+  });
+  test('Status 404 when invalid comment id', () => {
+    return request(app)
+        .delete("/api/article/notanarticlenumber")
+        .expect(404)
+        .then(({error}) => {
+          expect(error.text).toBe('Path not found!')
+        })
+  });
+});
+
 describe("GET /api/articles/:article_id/comments", () => {
   test("Status 200", () => {
     return request(app)
@@ -722,7 +767,7 @@ describe('DELETE /api/comments/:comment_id', () => {
           expect(body.msg).toBe('No comment to delete')
         })
   });
-  test('Status 400 when inavlid comment id', () => {
+  test('Status 400 when invalid comment id', () => {
     return request(app)
         .delete("/api/comments/9or7")
         .expect(400)
