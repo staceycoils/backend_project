@@ -3,6 +3,7 @@ const {
     addArticle,
     fetchArticle,
     alterArticle,
+    removeArticle,
     fetchArtComments,
     addArtComments
 } = require('../models/models_articles.js')
@@ -42,6 +43,15 @@ function patchArticle(req,res,next) {
     .catch(next)
 }
 
+function deleteArticle(req,res,next) {
+    let index = (req.params.article_id)
+    removeArticle(index)
+    .then(()=>{
+        res.status(204).send({})
+    })
+    .catch(next)
+}
+
 function getArtComments(req,res,next) {
     let index = (req.params.article_id)
     fetchArtComments(index)
@@ -65,6 +75,7 @@ module.exports = {
     postArticle,
     getArticle,
     patchArticle,
+    deleteArticle,
     getArtComments,
     postArtComments
 }

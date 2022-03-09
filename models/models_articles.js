@@ -68,6 +68,20 @@ function alterArticle(num, votes) {
     })
 }
 
+function removeArticle(num) {
+    return db.query(`DELETE FROM comments 
+                    WHERE article_id = ${num};`)
+        .then(()=>{
+            return db.query(`DELETE FROM articles
+                            WHERE article_id = ${num}
+                            RETURNING * ;`)
+        })
+        .then(({ rows }) => {
+            if (!rows[0]) return Promise.reject({ status: 404, msg: 'No article to delete' });
+            return rows
+        })
+}
+
 function fetchArtComments(num) {
     return db.query(`SELECT comment_id, votes, created_at, author, body FROM comments
                     WHERE article_id = ${[num]};`)
@@ -98,6 +112,7 @@ module.exports = {
     addArticle,
     fetchArticle,
     alterArticle,
+    removeArticle,
     fetchArtComments,
     addArtComments
 };
