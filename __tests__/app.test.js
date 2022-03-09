@@ -491,7 +491,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe.only("DELETE /api/articles/:article_id", () => {
+describe("DELETE /api/articles/:article_id", () => {
   test('Status 204', () => {
     return request(app)
       .delete('/api/articles/1')
