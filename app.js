@@ -9,6 +9,7 @@ const {
     postArticle,
     getArticle,
     patchArticle,
+    deleteArticle,
     getArtComments,
     postArtComments,
 } = require('./controllers/controllers_articles.js');
@@ -36,6 +37,7 @@ app.get("/api/articles", getArticles);
 app.post("/api/articles", postArticle)
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
+app.delete("/api/articles/:article_id", deleteArticle);
 app.get("/api/articles/:article_id/comments", getArtComments);
 app.post("/api/articles/:article_id/comments", postArtComments);
 
