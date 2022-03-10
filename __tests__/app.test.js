@@ -414,6 +414,14 @@ describe('GET /api/articles pagination', () => {
         expect(body.articles).toBeSortedBy('author', { descending: true })
       })
   });
+  test('adds a total_count property', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({body})=>{
+        expect(Object.keys(body)).toEqual(['articles', 'total_count'])
+      })
+  });
 });
 
 let newArticle = {
