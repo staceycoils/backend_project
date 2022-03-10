@@ -14,7 +14,8 @@ const {
     postArtComments,
 } = require('./controllers/controllers_articles.js');
 const { 
-    getTopics
+    getTopics,
+    postTopic
 } = require('./controllers/controllers_topics.js');
 const { 
     getUsers,
@@ -32,9 +33,10 @@ app.use(cors());
 app.get('/api', getApi)
 
 app.get("/api/topics", getTopics);
+app.post("/api/topics", postTopic);
 
 app.get("/api/articles", getArticles);
-app.post("/api/articles", postArticle)
+app.post("/api/articles", postArticle);
 app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
 app.delete("/api/articles/:article_id", deleteArticle);
