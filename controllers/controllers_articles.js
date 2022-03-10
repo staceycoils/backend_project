@@ -9,9 +9,9 @@ const {
 } = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
-    fetchArticles(req.query)
+    fetchArticles(req.query, req.query.limit, req.query.p)
     .then((data) => {
-        res.status(200).send({ 'articles': data })
+        res.status(200).send({ 'articles': data[0], 'total_count': data[1] })
     })
     .catch(next)
 }

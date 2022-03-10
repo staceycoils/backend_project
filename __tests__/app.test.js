@@ -273,7 +273,7 @@ describe("GET /api/articles queries", () => {
       .get("/api/articles?topic=mitch&order=asc&sort_by=title")
       .expect(200)
       .then(({ body })=>{
-        expect(body.articles.length).toBe(11)
+        expect(body.articles.length).toBe(10)
         expect(body.articles).toBeSortedBy('title', { descending: false })
         body.articles.forEach(article => {
           expect(article).toEqual(
@@ -305,7 +305,7 @@ describe("GET /api/articles queries", () => {
       .get("/api/articles?topicmitchorderascsortbytitle")
       .expect(200)
       .then(({ body })=>{
-        expect(body.articles.length).toBe(12)
+        expect(body.articles.length).toBe(10)
         body.articles.forEach(article => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -320,6 +320,107 @@ describe("GET /api/articles queries", () => {
           )
         })
     })
+  });
+});
+
+describe('GET /api/articles pagination', () => {
+  test('Status 200', () => { 
+    return request(app)
+      .get('/api/articles')  
+      .expect(200)
+  });
+  test('Returns an array limited to 10 articles by default', () => { 
+    return request(app)
+      .get('/api/articles')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.articles.length).toBe(10)
+      })
+  });
+  test('Returns an array limited to a requested number', () => { 
+    return request(app)
+      .get('/api/articles?limit=5')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.articles.length).toBe(5)
+      })
+  });
+  test('Limit query works with other queries', () => { 
+    return request(app)
+      .get('/api/articles?limit=5&sort_by=author')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.articles.length).toBe(5)
+        expect(body.articles).toBeSortedBy('author', { descending: true })
+      })
+  });
+  test('Return array starts from specified page', () => { 
+    return request(app)
+      .get('/api/articles?p=2')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.articles.length).toBe(2)
+      })
+  });
+  test('Page quantity changes with different limit', () => { 
+    return request(app)
+      .get('/api/articles?limit=7&p=2')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.articles.length).toBe(5)
+      })
+      .then(()=>{
+        return request(app)
+        .get('/api/articles?limit=3&p=3&sort_by=article_id&order=asc')  
+        .expect(200)
+        .then(({body})=>{
+          expect(body.articles.length).toBe(3)
+          expect(body.articles).toEqual([ 
+            {
+              article_id: 7,
+              author: 'icellusedkars',
+              created_at: expect.any(String),
+              title: 'Z',
+              topic: 'mitch',
+              votes: expect.any(Number),
+              comment_count: expect.any(Number)
+            }, {
+              article_id: 8,
+              author: 'icellusedkars',
+              created_at: expect.any(String),
+              title: 'Does Mitch predate civilisation?',
+              topic: 'mitch',
+              votes: expect.any(Number),
+              comment_count: expect.any(Number)
+            }, {
+              article_id: 9,
+              author: 'butter_bridge',
+              created_at: expect.any(String),
+              title: "They're not exactly dogs, are they?",
+              topic: 'mitch',
+              votes: expect.any(Number),
+              comment_count: expect.any(Number)
+            }
+          ])
+      })
+      })
+  });
+  test('Page and limit queries work with other queries', () => { 
+    return request(app)
+      .get('/api/articles?p=3&limit=5&sort_by=author')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.articles.length).toBe(2)
+        expect(body.articles).toBeSortedBy('author', { descending: true })
+      })
+  });
+  test('adds a total_count property', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({body})=>{
+        expect(Object.keys(body)).toEqual(['articles', 'total_count'])
+      })
   });
 });
 
