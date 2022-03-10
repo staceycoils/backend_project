@@ -95,6 +95,76 @@ describe("GET /api/topics", () => {
     })
 });
 
+let newTopic = {
+  "slug": 'vscode',
+  "description": "enter description here"
+}
+
+describe('POST /api/topics', () => {
+  test('Status 201', () => {
+    return request(app)
+      .post('/api/topics')
+      .send(newTopic)
+      .expect(201)
+  });
+  test('Returns a topic object with the new topic added', () => {
+    return request(app)
+      .post('/api/topics')
+      .send(newTopic)
+      .expect(201)
+      .then((response)=>{
+        expect(response.body.topic).toEqual(newTopic)
+      })
+  });
+  test('Status 400 if topic already exists', () => {
+    return request(app)
+      .post('/api/topics')
+      .send(newTopic)
+      .expect(201)
+      .then(()=>{
+        return request(app)
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(400)
+        .then((response)=>{
+          expect(response.body.msg).toBe('Bad Request')
+      })
+      })
+  });
+  test('Status 400 if inavlid object is sent', () => {
+    return request(app)
+      .post('/api/topics')
+      .send({slug: 'pie'})
+      .expect(400)
+      .then((response)=>{
+        expect(response.body.msg).toEqual('Incomplete Topic')
+      })
+      .then(()=>{
+        return request(app)
+        .post('/api/topics')
+        .send({description: 'enter description here'})
+        .expect(400)
+        .then((response)=>{
+          expect(response.body.msg).toEqual('Incomplete Topic')
+        })
+      })
+  });
+  test('GET /api/topics includes the new topic', () => {
+    return request(app)
+      .post('/api/topics')
+      .send(newTopic)
+      .expect(201)
+      .then(()=>{
+        return request(app)
+        .get('/api/topics')
+        .expect(200)
+        .then((response)=>{
+          expect(response.body.topics.length).toBe(4)
+      })
+      })
+  });
+});
+
 describe("GET /api/articles/", () => {
   test("Status 200", () => {
     return request(app)
