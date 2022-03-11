@@ -768,7 +768,7 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
   test('Responds with the posted comment', () => {
     return request(app)
-      .post("/api/articles/2/comments")
+      .post("/api/articles/9/comments")
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
@@ -776,10 +776,26 @@ describe('POST /api/articles/:article_id/comments', () => {
           'author': 'lurker', 
           'body': 'this is a test comment',
           'created_at': expect.any(String),
-          'article_id': 2,
+          'article_id': 9,
           'votes': 0,
           'comment_id': 19
         })
+      })
+      .then(()=>{
+        return request(app)
+          .post("/api/articles/5/comments")
+          .send(newComment)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).toEqual({ 
+              'author': 'lurker', 
+              'body': 'this is a test comment',
+              'created_at': expect.any(String),
+              'article_id': 5,
+              'votes': 0,
+              'comment_id': 20
+            })
+          })
       })
   });
   test('POST method adds a new comment each time', () => {
