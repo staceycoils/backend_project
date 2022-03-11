@@ -104,7 +104,7 @@ function addArtComments(num, comment) {
                 if (!data.rows[num-1]) return checkArticleExists(num);
                 return db.query(
                     `INSERT INTO comments (author, body, article_id)
-                    VALUES ('${comment.username}', '${comment.body}', 2) 
+                    VALUES ('${comment.username}', '${comment.body}', ${num}) 
                     RETURNING * ;`)
                     .then(({ rows }) => {
                         if (!rows[0]) return checkArticleExists(num)
