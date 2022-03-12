@@ -780,18 +780,12 @@ describe('GET /api/articles/:article_id/comments pagination', () => {
       })
   });
   test('Return array starts from specified page', () => { 
-      return request(app)
-        .post("/api/articles/1/comments")
-        .send(newComment)
-        .expect(201)
-        .then(()=>{
-          return request(app)
-          .get('/api/articles/1/comments?p=2') 
-            .expect(200)
-            .then(({body})=>{
-              expect(body.comments.length).toBe(1)
-            })
-    });
+    return request(app)
+      .get('/api/articles/1/comments?p=2') 
+      .expect(200)
+      .then(({body})=>{
+        expect(body.comments.length).toBe(1)
+      })
   });
   test('Page quantity changes with different limit', () => { 
     return request(app)
