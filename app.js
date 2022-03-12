@@ -1,53 +1,12 @@
 const express = require("express");
 const cors = require('cors');
-
-const {
-    getApi
-} = require('./utils')
-const { 
-    getArticles,
-    postArticle,
-    getArticle,
-    patchArticle,
-    deleteArticle,
-    getArtComments,
-    postArtComments,
-} = require('./controllers/controllers_articles.js');
-const { 
-    getTopics,
-    postTopic
-} = require('./controllers/controllers_topics.js');
-const { 
-    getUsers,
-    getUser
-} = require('./controllers/controllers_users.js');
-const { 
-    patchComment,
-    deleteComment
-} = require('./controllers/controllers_comments.js');
+const apiRouter = require('./routes/router_api');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/api', getApi)
-
-app.get("/api/topics", getTopics);
-app.post("/api/topics", postTopic);
-
-app.get("/api/articles", getArticles);
-app.post("/api/articles", postArticle);
-app.get("/api/articles/:article_id", getArticle);
-app.patch("/api/articles/:article_id", patchArticle);
-app.delete("/api/articles/:article_id", deleteArticle);
-app.get("/api/articles/:article_id/comments", getArtComments);
-app.post("/api/articles/:article_id/comments", postArtComments);
-
-app.patch("/api/comments/:comment_id", patchComment);
-app.delete("/api/comments/:comment_id", deleteComment);
-
-app.get("/api/users", getUsers)
-app.get("/api/users/:username", getUser)
+app.use('/api', apiRouter);
 
 app.use("/*", (req,res) => {
     res.status(404).send("Path not found!")
