@@ -88,9 +88,10 @@ function removeArticle(num) {
         })
 }
 
-function fetchArtComments(num) {
+function fetchArtComments(num, limit=10, page=1) {
     return db.query(`SELECT comment_id, votes, created_at, author, body FROM comments
-                    WHERE article_id = ${[num]};`)
+                    WHERE article_id = ${[num]}
+                    LIMIT ${limit} OFFSET ${limit*(page-1)};`)
         .then(({ rows }) => {
             if (!rows[0]) return checkArticleExists(num)
             return rows

@@ -54,7 +54,7 @@ function deleteArticle(req,res,next) {
 
 function getArtComments(req,res,next) {
     let index = (req.params.article_id)
-    fetchArtComments(index)
+    fetchArtComments(index, req.query.limit, req.query.p)
     .then((data) => {
         res.status(200).send({ 'comments': data })
     })
