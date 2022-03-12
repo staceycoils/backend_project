@@ -757,6 +757,52 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe('GET /api/articles/:article_id/comments pagination', () => { 
+  test('Status 200', () => { 
+    return request(app)
+    .get('/api/articles/1/comments')
+    .expect(200)
+  });
+  test('Returns an array limited to 10 articles by default', () => { 
+    return request(app)
+      .get('/api/articles/1/comments')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.comments.length).toBe(10)
+      })
+  });
+  test('Returns an array limited to a requested number', () => { 
+    return request(app)
+      .get('/api/articles/1/comments?limit=5')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.comments.length).toBe(5)
+      })
+  });
+  test('Return array starts from specified page', () => { 
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(()=>{
+          return request(app)
+          .get('/api/articles/1/comments?p=2') 
+            .expect(200)
+            .then(({body})=>{
+              expect(body.comments.length).toBe(1)
+            })
+    });
+  });
+  test('Page quantity changes with different limit', () => { 
+    return request(app)
+      .get('/api/articles/1/comments?limit=7&p=2')  
+      .expect(200)
+      .then(({body})=>{
+        expect(body.comments.length).toBe(4)
+      })
+  })
+})
+
 let newComment = { 'username': 'lurker' , 'body': 'this is a test comment' };
 
 describe('POST /api/articles/:article_id/comments', () => {
@@ -768,7 +814,7 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
   test('Responds with the posted comment', () => {
     return request(app)
-      .post("/api/articles/2/comments")
+      .post("/api/articles/9/comments")
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
@@ -776,10 +822,26 @@ describe('POST /api/articles/:article_id/comments', () => {
           'author': 'lurker', 
           'body': 'this is a test comment',
           'created_at': expect.any(String),
-          'article_id': 2,
+          'article_id': 9,
           'votes': 0,
           'comment_id': 19
         })
+      })
+      .then(()=>{
+        return request(app)
+          .post("/api/articles/5/comments")
+          .send(newComment)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).toEqual({ 
+              'author': 'lurker', 
+              'body': 'this is a test comment',
+              'created_at': expect.any(String),
+              'article_id': 5,
+              'votes': 0,
+              'comment_id': 20
+            })
+          })
       })
   });
   test('POST method adds a new comment each time', () => {
