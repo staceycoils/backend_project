@@ -6,7 +6,7 @@ const fs = require('fs/promises');
 function getApi(req,res,next) {
   fs.readFile('./endpoints.json')
       .then((data) => {
-          return data
+          return JSON.parse(data)
       })
       .then((data) => {
           res.status(200).send(data)

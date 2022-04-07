@@ -30,7 +30,7 @@ describe('GET /api', () => {
       .get('/api')
       .expect(200)
       .then(({ body }) => {
-        expect(JSON.parse(body)).toBeTruthy()
+        expect(body).toBeTruthy()
       })
   });
   test('Returns all available endpoints', () => {
@@ -38,8 +38,7 @@ describe('GET /api', () => {
       .get('/api')
       .expect(200)
       .then(({ body }) => {
-        const endpoints = JSON.parse(body)
-        expect(Object.keys(endpoints)).toEqual(
+        expect(Object.keys(body)).toEqual(
           expect.arrayContaining([
           'GET /api' ,
           'GET /api/topics' ,
@@ -58,10 +57,9 @@ describe('GET /api', () => {
       .get('/api')
       .expect(200)
       .then(({ body }) => {
-        const endpoints = JSON.parse(body)
-        delete endpoints['GET /api']
-        for (const endpoint in endpoints) {
-          expect(endpoints[endpoint]).toEqual(
+        delete body['GET /api']
+        for (const endpoint in body) {
+          expect(body[endpoint]).toEqual(
             expect.objectContaining({
               "description": expect.any(String),
               "exampleResponse": expect.any(Object),
