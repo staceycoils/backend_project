@@ -49,6 +49,7 @@ describe('GET /api', () => {
           'POST /api/articles/:article_id/comments' ,
           'DELETE /api/comments/:comment_id' ,
           'GET /api/users' ,
+          'GET /api/users/:username' ,
         ]))
       })
   });
