@@ -2,30 +2,28 @@ const db = require('../db/connection.js')
 const {checkArticleExists,checkQueryTerms} = require('../utils.js')
 
 function fetchArticles(search, limit=10, page=1) {
-    const {sort_by,topic,order} = checkQueryTerms(search)
-    return db.query(`SELECT article_id, author, created_at, title, topic, votes FROM articles
+    const {sort_by,topic,order} = checkQueryTerms(search);
+    return Promise.all([
+        db.query(`SELECT article_id, author, created_at, title, topic, votes FROM articles
                     ${topic}
                     ORDER BY ${sort_by} ${order}
-                    LIMIT ${limit} OFFSET ${limit*(page-1)};`)
-        .then((articles) => {
-            articles.rows.map((article) => article.comment_count = 0)
-            return db.query(`SELECT * FROM articles
-                            ${topic}
-                            ORDER BY ${sort_by} ${order};`)
-            .then((articlesFull) => {
-                return db.query(`SELECT * FROM comments;`)
-                .then((comments) => {
-                    comments.rows.forEach(comment => {
-                        if (!articles.rows[comment.article_id - 1]) return
-                        articles.rows[comment.article_id - 1].comment_count += 1
-                    });
-                    return [articles.rows,articlesFull.rows.length]
-                })
-            })
-        })
-        .catch(()=>{
-          return Promise.reject({ status: 400, msg: 'Bad Request' });
-        })
+                    LIMIT ${limit} OFFSET ${limit*(page-1)};`),
+        db.query(`SELECT * FROM articles
+        ${topic}
+        ORDER BY ${sort_by} ${order};`),
+        db.query(`SELECT * FROM comments;`)
+    ])
+    .then(([articles, articlesFull, comments]) => {
+        articles.rows.map((article) => article.comment_count = 0);
+        comments.rows.forEach(comment => {
+            if (!articles.rows[comment.article_id - 1]) return
+            articles.rows[comment.article_id - 1].comment_count += 1
+        });
+        return [articles.rows , articlesFull.rows.length];
+    })
+    .catch(()=>{
+        return Promise.reject({ status: 400, msg: 'Bad Request' });
+      })
 }
 
 function addArticle(article) {
