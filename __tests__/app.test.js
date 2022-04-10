@@ -210,14 +210,14 @@ describe("GET /api/articles/", () => {
           body.articles.forEach(article => {
             expect(article).toEqual(
               expect.objectContaining({
-                comment_count:     expect.any(Number)
+                comment_count: expect.any(String)
               })
             )
           })
-          expect(body.articles[0].comment_count).toBe(11)
-          expect(body.articles[1].comment_count).toBe(0)
-          expect(body.articles[2].comment_count).toBe(2)
-          expect(body.articles[8].comment_count).toBe(2)
+          expect(body.articles[0].comment_count).toBe('2')
+          expect(body.articles[1].comment_count).toBe('1')
+          expect(body.articles[2].comment_count).toBe('0')
+          expect(body.articles[5].comment_count).toBe('11')
       })
   })
 });
@@ -314,7 +314,7 @@ describe("GET /api/articles queries", () => {
               topic:          expect.any(String),
               created_at:     expect.any(String),
               votes:          expect.any(Number),
-              comment_count:  expect.any(Number)
+              comment_count:  expect.any(String)
             })
           )
         })
@@ -382,7 +382,7 @@ describe('GET /api/articles pagination', () => {
               title: 'Z',
               topic: 'mitch',
               votes: expect.any(Number),
-              comment_count: expect.any(Number)
+              comment_count: '0'
             }, {
               article_id: 8,
               author: 'icellusedkars',
@@ -390,7 +390,7 @@ describe('GET /api/articles pagination', () => {
               title: 'Does Mitch predate civilisation?',
               topic: 'mitch',
               votes: expect.any(Number),
-              comment_count: expect.any(Number)
+              comment_count: '0'
             }, {
               article_id: 9,
               author: 'butter_bridge',
@@ -398,7 +398,7 @@ describe('GET /api/articles pagination', () => {
               title: "They're not exactly dogs, are they?",
               topic: 'mitch',
               votes: expect.any(Number),
-              comment_count: expect.any(Number)
+              comment_count: '2'
             }
           ])
       })
