@@ -1,5 +1,6 @@
 node_modules
-.env*
+.env.dev*
+.env.test
 app_*.test.js
 app_*.txt
 app copy.js
