@@ -10,6 +10,10 @@ The frontend files are a seperate repository, located at https://github.com/stac
 
 This repo requires the minimum versions of the following:
 
+  <li>npm: 8.3.0</li>
+  <li>node: 17.3.0</li>
+  <br/>
+
 ### Installation
 
 1) Clone the repository into the selected folder by using: <br>
