@@ -2,7 +2,8 @@ const request = require("supertest");
 const app = require("../app.js");
 const seed = require('../db/seeds/seed')
 const data = require('../db/data/test-data')
-const db = require('../db/connection.js')
+const db = require('../db/connection.js');
+const { convertTimestampToDate } = require("../db/helpers/utils.js");
 
 beforeEach(() => seed(data))
 
@@ -42,11 +43,15 @@ describe('GET /api', () => {
           expect.arrayContaining([
           'GET /api' ,
           'GET /api/topics' ,
+          'POST /api/topics' ,
           'GET /api/articles' ,
+          'POST /api/articles' ,
           'GET /api/articles/:article_id' ,
           'PATCH /api/articles/:article_id' ,
+          'DELETE /api/articles/:article_id' ,
           'GET /api/articles/:article_id/comments' ,
           'POST /api/articles/:article_id/comments' ,
+          'PATCH /api/comments/:comment_id' ,
           'DELETE /api/comments/:comment_id' ,
           'GET /api/users' ,
           'GET /api/users/:username' ,
@@ -460,7 +465,7 @@ describe('POST /api/articles', () => {
     .post("/api/articles")
     .send(newArticle)
     .expect(201)
-    .then((data)=>{
+    .then(()=>{
       return request(app)
       .post("/api/articles")
       .send(newArticle)
@@ -501,7 +506,7 @@ describe('POST /api/articles', () => {
         return request(app)
         .get("/api/articles/13")
         .expect(200)
-        .then(({body}) => {
+        .then(({ body }) => {
           expect(body.article).toEqual({
             'title': newArticle.title,
             'author': newArticle.author,
@@ -671,8 +676,8 @@ describe("DELETE /api/articles/:article_id", () => {
     return request(app)
         .delete("/api/articles/1")
         .expect(204)
-        .then((response) => {
-          expect(response.body).toEqual({})
+        .then(({ body }) => {
+          expect(body).toEqual({})
         })
   });
   test('Status 404 for GET requests for deleted article id', () => {
@@ -692,7 +697,7 @@ describe("DELETE /api/articles/:article_id", () => {
     return request(app)
         .delete("/api/articles/97")
         .expect(404)
-        .then(({body}) => {
+        .then(({ body }) => {
           expect(body.msg).toBe('No article to delete')
         })
   });
@@ -700,7 +705,7 @@ describe("DELETE /api/articles/:article_id", () => {
     return request(app)
         .delete("/api/article/notanarticlenumber")
         .expect(404)
-        .then(({error}) => {
+        .then(({ error }) => {
           expect(error.text).toBe('Path not found!')
         })
   });
@@ -766,7 +771,7 @@ describe('GET /api/articles/:article_id/comments pagination', () => {
     return request(app)
       .get('/api/articles/1/comments')  
       .expect(200)
-      .then(({body})=>{
+      .then(({ body })=>{
         expect(body.comments.length).toBe(10)
       })
   });
@@ -774,7 +779,7 @@ describe('GET /api/articles/:article_id/comments pagination', () => {
     return request(app)
       .get('/api/articles/1/comments?limit=5')  
       .expect(200)
-      .then(({body})=>{
+      .then(({ body })=>{
         expect(body.comments.length).toBe(5)
       })
   });
@@ -782,7 +787,7 @@ describe('GET /api/articles/:article_id/comments pagination', () => {
     return request(app)
       .get('/api/articles/1/comments?p=2') 
       .expect(200)
-      .then(({body})=>{
+      .then(({ body })=>{
         expect(body.comments.length).toBe(1)
       })
   });
@@ -790,7 +795,7 @@ describe('GET /api/articles/:article_id/comments pagination', () => {
     return request(app)
       .get('/api/articles/1/comments?limit=7&p=2')  
       .expect(200)
-      .then(({body})=>{
+      .then(({ body })=>{
         expect(body.comments.length).toBe(4)
       })
   })
@@ -968,8 +973,8 @@ describe('DELETE /api/comments/:comment_id', () => {
     return request(app)
         .delete("/api/comments/15")
         .expect(204)
-        .then((response) => {
-          expect(response.body).toEqual({})
+        .then(({ body }) => {
+          expect(body).toEqual({})
         })
   });
   test('GET requests show updated comment counts', () => {
@@ -989,7 +994,7 @@ describe('DELETE /api/comments/:comment_id', () => {
     return request(app)
         .delete("/api/comments/97")
         .expect(404)
-        .then(({body}) => {
+        .then(({ body }) => {
           expect(body.msg).toBe('No comment to delete')
         })
   });
@@ -997,7 +1002,7 @@ describe('DELETE /api/comments/:comment_id', () => {
     return request(app)
         .delete("/api/comments/9or7")
         .expect(400)
-        .then(({body}) => {
+        .then(({ body }) => {
           expect(body.msg).toBe('Bad Request')
         })
   });
