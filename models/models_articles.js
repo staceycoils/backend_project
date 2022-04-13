@@ -91,38 +91,10 @@ function removeArticle(num) {
         })
 }
 
-function fetchArtComments(num, limit=10, page=1) {
-    return db.query(`SELECT comment_id, votes, created_at, author, body FROM comments
-                    WHERE article_id = ${[num]}
-                    LIMIT ${limit} OFFSET ${limit*(page-1)};`)
-        .then(({ rows }) => {
-            if (!rows[0]) return checkArticleExists(num)
-            return rows
-        })
-}
-
-function addArtComments(num, comment) {
-    return db.query(`SELECT * FROM articles
-                    ORDER BY article_id ASC;`)
-            .then((data) => {
-                if (!data.rows[num-1]) return checkArticleExists(num);
-                return db.query(
-                    `INSERT INTO comments (author, body, article_id)
-                    VALUES ('${comment.username}', '${comment.body}', ${num}) 
-                    RETURNING * ;`)
-                    .then(({ rows }) => {
-                        if (!rows[0]) return checkArticleExists(num)
-                        return rows[0]
-                    })
-            })
-};
-
 module.exports = {
     fetchArticles,
     addArticle,
     fetchArticle,
     alterArticle,
     removeArticle,
-    fetchArtComments,
-    addArtComments
 };

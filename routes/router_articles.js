@@ -5,9 +5,11 @@ const {
     getArticle,
     patchArticle,
     deleteArticle,
-    getArtComments,
-    postArtComments,
 } = require('../controllers/controllers_articles.js');
+const { 
+    getArtComments,
+    postArtComments
+} = require('../controllers/controllers_comments.js');
 
 articlesRouter.get("/", getArticles);
 articlesRouter.post("/", postArticle);

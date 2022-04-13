@@ -52,30 +52,10 @@ function deleteArticle(req,res,next) {
     .catch(next)
 }
 
-function getArtComments(req,res,next) {
-    let index = (req.params.article_id)
-    fetchArtComments(index, req.query.limit, req.query.p)
-    .then((data) => {
-        res.status(200).send({ 'comments': data })
-    })
-    .catch(next)
-}
-
-function postArtComments(req,res,next) {
-    let index = (req.params.article_id)
-    addArtComments(index, req.body)
-    .then((data) => {
-        res.status(201).send({ 'comment': data })
-    })
-    .catch(next)
-}
-
 module.exports = {
     getArticles,
     postArticle,
     getArticle,
     patchArticle,
     deleteArticle,
-    getArtComments,
-    postArtComments
 }
