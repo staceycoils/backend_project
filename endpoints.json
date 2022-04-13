@@ -10,6 +10,11 @@
         {"description": "articles about coding"}
       ]}
   },
+  "POST /api/topics": {
+    "description": "Adds a topic to the database",
+    "exampleSubmission": { "slug": "slug" , "description": "description" },
+    "exampleResponse": { "slug": "slug" , "description": "description" }
+  },
   "GET /api/articles": {
     "description": "returns an array of all articles' summary, sorted by latest by default",
     "queries": ["order","topic","sort_by"],
@@ -23,6 +28,25 @@
         "created_at": "2022-02-22T14:22:22.000Z",
         "votes": 0
       }]
+    }
+  },
+  "POST /api/articles": {
+    "description": "Adds a new article to the database",
+    "exampleSubmission": {
+      "title": "How to create new articles on the new website NC-News",
+      "author": "lurker",
+      "body": "Press buttons then do the tip tap noise",
+      "topic": "cats"
+    },
+    "exampleResponse": { 
+      "title": "How to create new articles on the new website NC-News",
+      "author": "lurker", 
+      "body": "Press buttons then do the tip tap noise",
+      "created_at": 2022,
+      "article_id": 100,
+      "votes": 0,
+      "topic": "cats",
+      "comment_id": 0
     }
   },
   "GET /api/articles/:article_id": {
@@ -57,6 +81,10 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "removes the selected article. will return an empty object",
+    "exampleResponse": {}
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "returns an array of comments for a specified article",
     "exampleResponse": {
@@ -79,6 +107,21 @@
       "article_id": 1,
       "votes": 0,
       "comment_id": 19
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates a specified category on the selected comment and returns the updated entry",
+    "patchOptions": "incVotes",
+    "exampleSubmission": { "incVotes": 100 },
+    "exampleResponse": {
+      "comment": { 
+        "author": "lurker", 
+        "body": "this is a test comment",
+        "created_at": 2022,
+        "article_id": 1,
+        "votes": 100,
+        "comment_id": 19
+      }
     }
   },
   "DELETE /api/comments/:comment_id": {
