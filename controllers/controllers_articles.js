@@ -4,8 +4,6 @@ const {
     fetchArticle,
     alterArticle,
     removeArticle,
-    fetchArtComments,
-    addArtComments
 } = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
@@ -16,19 +14,19 @@ function getArticles(req,res,next) {
     .catch(next)
 }
 
-function postArticle(req,res,next) {
-    addArticle(req.body)
-    .then((data) => {
-        res.status(201).send({ 'article': data })
-    })
-    .catch(next)
-}
-
 function getArticle(req,res,next) {
     let index = (req.params.article_id)
     fetchArticle(index)
     .then((data) => {
         res.status(200).send({ 'article': data })
+    })
+    .catch(next)
+}
+
+function postArticle(req,res,next) {
+    addArticle(req.body)
+    .then((data) => {
+        res.status(201).send({ 'article': data })
     })
     .catch(next)
 }
