@@ -1,4 +1,3 @@
-const { user } = require('pg/lib/defaults')
 const db = require('../db/connection.js')
 
 function fetchUsers() {
