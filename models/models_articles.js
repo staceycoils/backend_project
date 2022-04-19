@@ -61,10 +61,10 @@ function fetchArticle(num) {
 function alterArticle(num, votes) {
     if (typeof votes !== 'number') return Promise.reject({ status: 400, msg: 'Bad Request' })
     return db.query(`SELECT * FROM articles
-                    ORDER BY article_id ASC;`)
+                    WHERE article_id = ${num};`)
     .then((data) => {
-        if (!data.rows[num-1]) return checkArticleExists(num);
-        let newVotes = data.rows[num-1].votes + votes
+        if (!data.rows[0]) return checkArticleExists(num);
+        let newVotes = data.rows[0].votes + votes
         return db.query(
             `UPDATE articles 
             SET votes = ${[newVotes]}
