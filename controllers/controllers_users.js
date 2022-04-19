@@ -1,6 +1,7 @@
 const {
     fetchUsers,
-    fetchUser
+    fetchUser,
+    fetchUserArticles
 } = require('../models/models_users.js')
 
 function getUsers(req,res,next) {
@@ -20,7 +21,17 @@ function getUser(req,res,next) {
     .catch(next)
 }
 
+function getUserArticles(req,res,next) {
+    const user = req.params.username
+    fetchUserArticles(user)
+    .then((data) => {
+        res.status(200).send({ 'articles': data })
+    })
+    .catch(next)
+}
+
 module.exports = {
     getUsers,
-    getUser
+    getUser,
+    getUserArticles
 } 
