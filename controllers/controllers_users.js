@@ -1,7 +1,8 @@
 const {
     fetchUsers,
     fetchUser,
-    fetchUserArticles
+    fetchUserArticles,
+    fetchUserComments
 } = require('../models/models_users.js')
 
 function getUsers(req,res,next) {
@@ -30,8 +31,18 @@ function getUserArticles(req,res,next) {
     .catch(next)
 }
 
+function getUserComments(req,res,next) {
+    const user = req.params.username
+    fetchUserComments(user)
+    .then((data) => {
+        res.status(200).send({ 'comments': data })
+    })
+    .catch(next)
+}
+
 module.exports = {
     getUsers,
     getUser,
-    getUserArticles
+    getUserArticles,
+    getUserComments
 } 
