@@ -31,6 +31,35 @@ function fetchArticles(search, limit=10, page=1) {
       })
 }
 
+function fetchAllArticles(search) {
+    const {sort_by,topic,order} = checkQueryTerms(search);
+    return Promise.all([
+        db.query(`SELECT 
+                articles.article_id, 
+                articles.author, 
+                articles.created_at, 
+                title, 
+                topic, 
+                articles.votes, 
+                    COUNT(comments.article_id) AS comment_count
+                    FROM articles
+                    LEFT JOIN comments ON articles.article_id = comments.article_id
+                    ${topic}
+                    GROUP BY
+                    articles.article_id
+                    ORDER BY ${sort_by} ${order};`),
+        db.query(`SELECT * FROM articles
+        ${topic}
+        ORDER BY ${sort_by} ${order};`)
+    ])
+    .then(([articles, articlesFull]) => {
+        return [articles.rows , articlesFull.rows.length];
+    })
+    .catch(()=>{
+        return Promise.reject({ status: 400, msg: 'Bad Request' });
+      })
+}
+
 function addArticle(article) {
     const { title, author, body, topic } = article
         return db.query(
@@ -97,4 +126,5 @@ module.exports = {
     fetchArticle,
     alterArticle,
     removeArticle,
+    fetchAllArticles
 };

@@ -4,14 +4,23 @@ const {
     fetchArticle,
     alterArticle,
     removeArticle,
+    fetchAllArticles
 } = require('../models/models_articles.js')
 
 function getArticles(req,res,next) {
+    if (req.query.limit === 'none') {
+        fetchAllArticles(req.query)
+        .then((data) => {
+            res.status(200).send({ 'articles': data[0], 'total_count': data[1] })
+        })
+        .catch(next)
+    } else {
     fetchArticles(req.query, req.query.limit, req.query.p)
     .then((data) => {
-        res.status(200).send({ 'articles': data[0], 'total_count': data[1] })
-    })
-    .catch(next)
+            res.status(200).send({ 'articles': data[0], 'total_count': data[1] })
+        })
+        .catch(next)
+    }
 }
 
 function getArticle(req,res,next) {
