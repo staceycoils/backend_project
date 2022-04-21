@@ -4,6 +4,7 @@ const seed = require('../db/seeds/seed')
 const data = require('../db/data/test-data')
 const db = require('../db/connection.js');
 const { convertTimestampToDate } = require("../db/helpers/utils.js");
+jest.setTimeout(50000);
 
 beforeEach(() => seed(data))
 
@@ -1052,6 +1053,141 @@ describe('GET /api/users/:username', () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("No username on record")
+      })
+  });
+});
+
+describe('GET /api/users/:username/articles', () => {
+  test('Status 200', () => {
+    return request(app)
+      .get('/api/users/rogersop/articles')
+      .expect(200)
+  });
+  test('Returns an array of all articles by a given user', () => {
+    return request(app)
+      .get('/api/users/rogersop/articles')
+      .expect(200)
+      .then(({body})=>{
+        expect(body).toEqual({ articles:
+          [
+            {
+              article_id: 4,
+              title: 'Student SUES Mitch!',
+              topic: 'mitch',
+              author: 'rogersop',
+              body: 'We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages',
+              created_at: '2020-05-06T01:14:00.000Z',
+              votes: 0
+            },
+            {
+              article_id: 5,
+              title: 'UNCOVERED: catspiracy to bring down democracy',
+              topic: 'cats',
+              author: 'rogersop',
+              body: 'Bastet walks amongst us, and the cats are taking arms!',
+              created_at: '2020-08-03T13:14:00.000Z',
+              votes: 0
+            },
+            {
+              article_id: 10,
+              title: 'Seven inspirational thought leaders from Manchester UK',
+              topic: 'mitch',
+              author: 'rogersop',
+              body: "Who are we kidding, there is only one, and it's Mitch!",
+              created_at: '2020-05-14T04:15:00.000Z',
+              votes: 0
+            }
+          ]})
+      })
+  });
+  test('Status 404 when username is not on record', () => {
+    return request(app)
+      .get('/api/users/staceycoils/articles')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No username on record")
+      })
+  });
+  test('Status 404 if there are no articles for a user', () => {
+    return request(app)
+      .get('/api/users/lurker/articles')
+      .expect(404)
+      .then(({body})=>{
+        expect(body.msg).toBe('No articles for user')
+      })
+  });
+});
+
+describe('GET /api/users/:username/comments', () => {
+  test('Status 200', () => {
+    return request(app)
+      .get('/api/users/butter_bridge/comments')
+      .expect(200)
+  });
+  test('Returns an array of all comments by a given user', () => {
+    return request(app)
+      .get('/api/users/butter_bridge/comments')
+      .expect(200)
+      .then(({body})=>{
+        expect(body).toEqual({ comments:
+          [
+            {
+              comment_id: 1,
+              body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+              article_id: 9,
+              author: 'butter_bridge',
+              votes: 16,
+              created_at: '2020-04-06T12:17:00.000Z'
+            },
+            {
+              comment_id: 2,
+              body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+              article_id: 1,
+              author: 'butter_bridge',
+              votes: 14,
+              created_at: '2020-10-31T03:03:00.000Z'
+            },
+            {
+              comment_id: 15,
+              body: "I am 100% sure that we're not completely sure.",
+              article_id: 5,
+              author: 'butter_bridge',
+              votes: 1,
+              created_at: '2020-11-24T00:08:00.000Z'
+            },
+            {
+              comment_id: 16,
+              body: 'This is a bad article name',
+              article_id: 6,
+              author: 'butter_bridge',
+              votes: 1,
+              created_at: '2020-10-11T15:23:00.000Z'
+            },
+            {
+              comment_id: 18,
+              body: 'This morning, I showered for nine minutes.',
+              article_id: 1,
+              author: 'butter_bridge',
+              votes: 16,
+              created_at: '2020-07-21T00:20:00.000Z'
+            }
+          ]})
+      })
+  });
+  test('Status 404 when username is not on record', () => {
+    return request(app)
+      .get('/api/users/staceycoils/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No username on record")
+      })
+  });
+  test('Status 404 if there are no comments for a user', () => {
+    return request(app)
+      .get('/api/users/lurker/comments')
+      .expect(404)
+      .then(({body})=>{
+        expect(body.msg).toBe('No comments for user')
       })
   });
 });
