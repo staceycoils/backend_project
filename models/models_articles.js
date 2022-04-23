@@ -41,7 +41,8 @@ function fetchAllArticles(search) {
                 title, 
                 topic, 
                 articles.votes, 
-                    COUNT(comments.article_id) AS comment_count
+                    COUNT(comments.article_id) AS comment_count,
+                    (articles.votes * COUNT(comments.article_id)) AS hotness
                     FROM articles
                     LEFT JOIN comments ON articles.article_id = comments.article_id
                     ${topic}
