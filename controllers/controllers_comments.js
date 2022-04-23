@@ -2,7 +2,8 @@ const {
     alterComment,
     removeComment,
     fetchArtComments,
-    addArtComments
+    addArtComments,
+    fetchNewComment
 } = require('../models/models_comments.js')
 
 function patchComment(req,res,next) {
@@ -42,9 +43,18 @@ function postArtComments(req,res,next) {
     .catch(next)
 }
 
+function getNewComment(req,res,next) {
+    fetchNewComment()
+        .then((data=>{
+            res.status(200).send({ 'comment': data })
+        }))
+        .catch(next)
+}
+
 module.exports = {
     patchComment,
     deleteComment,
     getArtComments,
-    postArtComments
+    postArtComments,
+    getNewComment
 }

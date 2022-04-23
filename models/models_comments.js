@@ -56,9 +56,19 @@ function addArtComments(num, comment) {
             })
 };
 
+function fetchNewComment() {
+    return db.query(`SELECT * FROM comments
+                    ORDER BY created_at DESC
+                    LIMIT 1;`)
+            .then(({rows})=> {
+                return rows
+            })
+}
+
 module.exports = {
     alterComment,
     removeComment,
     fetchArtComments,
-    addArtComments
+    addArtComments,
+    fetchNewComment
 }; 
