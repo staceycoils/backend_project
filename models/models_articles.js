@@ -20,8 +20,7 @@ function fetchArticles(search, limit=10, page=1) {
                     ORDER BY ${sort_by} ${order}
                     LIMIT ${limit} OFFSET ${limit*(page-1)};`),
         db.query(`SELECT * FROM articles
-        ${topic}
-        ORDER BY ${sort_by} ${order};`)
+        ${topic};`)
     ])
     .then(([articles, articlesFull]) => {
         return [articles.rows , articlesFull.rows.length];
